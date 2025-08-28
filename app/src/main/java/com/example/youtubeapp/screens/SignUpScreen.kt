@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -17,10 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.youtubeapp.R
+import com.example.youtubeapp.components.ButtonComponent
+import com.example.youtubeapp.components.DividerTextComponent
 import com.example.youtubeapp.components.HeadingTextComponent
 import com.example.youtubeapp.components.NormalTextComponent
-import com.example.youtubeapp.components.PasswordTextField
-import com.example.youtubeapp.components.TextField
+import com.example.youtubeapp.components.PasswordTextFieldComponent
+import com.example.youtubeapp.components.TextFieldComponent
 import com.example.youtubeapp.viewmodel.SignUpViewModel
 
 
@@ -30,7 +31,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(28.dp),
+            .padding(top = 60.dp, start = 30.dp, end = 30.dp),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             NormalTextComponent(value = stringResource(R.string.hello))
@@ -38,7 +39,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            TextField(
+            TextFieldComponent(
                 labelValue = stringResource(R.string.name),
                 value = viewModel.name,
                 onValueChange = { viewModel.name = it },
@@ -47,7 +48,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextField(
+            TextFieldComponent(
                 labelValue = stringResource(R.string.email),
                 value = viewModel.email,
                 onValueChange = { viewModel.email = it },
@@ -58,7 +59,7 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
             Spacer(modifier = Modifier.height(8.dp))
 
 
-            PasswordTextField(
+            PasswordTextFieldComponent(
                 labelValue = stringResource(R.string.password),
                 value = viewModel.password,
                 onValueChange = { viewModel.password = it },
@@ -67,14 +68,13 @@ fun SignUpScreen(viewModel: SignUpViewModel = viewModel()) {
             )
 
 
+            Spacer(modifier = Modifier.height(70.dp))
+
+            ButtonComponent(value = stringResource(R.string.signup))
+
             Spacer(modifier = Modifier.height(20.dp))
 
-            androidx.compose.material3.Button(
-                onClick = { viewModel.submit() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                androidx.compose.material3.Text("Sign Up")
-            }
+            DividerTextComponent()
         }
     }
 }
