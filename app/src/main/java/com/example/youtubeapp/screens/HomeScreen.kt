@@ -1,7 +1,6 @@
 package com.example.youtubeapp.screens
 
 import android.annotation.SuppressLint
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +26,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,53 +35,76 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.example.youtubeapp.R
 import com.example.youtubeapp.VideoItem
 import com.example.youtubeapp.VideoRepository
 import com.example.youtubeapp.VideoUser
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import com.skydoves.landscapist.glide.GlideImage
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen() {
-
     val items = listOf("Home", "Subscriptions", "Profile")
     val icons = listOf(
         painterResource(id = R.drawable.home),
         painterResource(id = R.drawable.lists),
         painterResource(id = R.drawable.profile)
     )
-    val sampleVideos = VideoRepository.getRNGVid(10)
+
+    var isSearching by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+
+    val allVideos = VideoRepository.videos
+
+    val displayedVideos = if (searchQuery.isNotBlank()) {
+        allVideos.filter { video ->
+            video.title.contains(searchQuery, ignoreCase = true) ||
+                    video.channel.contains(searchQuery, ignoreCase = true)
+        }
+    } else {
+        VideoRepository.getRNGVid(10)
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.youtube),
-                            contentDescription = "YouTube logo",
-                            modifier = Modifier.size(36.dp)
+                    if (isSearching) {
+                        TextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text("Search videos...") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
                         )
-                        Text(text = "AliExpress YouTube")
+                    } else {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.youtube),
+                                contentDescription = "YouTube logo",
+                                modifier = Modifier.size(36.dp)
+                            )
+                            Text(text = "AliExpress YouTube")
+                        }
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        if (isSearching) {
+                            searchQuery = ""
+                        }
+                        isSearching = !isSearching
+                    }) {
                         Icon(
-                            painter = painterResource(R.drawable.search),
+                            painter = painterResource(
+                                if (isSearching) R.drawable.x else R.drawable.search
+                            ),
                             contentDescription = "Search",
                             modifier = Modifier.size(24.dp)
                         )
@@ -91,32 +114,20 @@ fun HomeScreen() {
         },
         content = { paddingValues ->
             Box(modifier = Modifier.padding(paddingValues)) {
-                VideoList(videos = sampleVideos, size = 200)
+                VideoList(videos = displayedVideos, size = 200)
             }
         },
         bottomBar = {
             NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon( icons[0], contentDescription = items[0]) },
-                    label = { Text(items[0]) },
-                    modifier = Modifier.size(24.dp),
-                    selected = true,
-                    onClick = {  }
-                )
-                NavigationBarItem(
-                    icon = { Icon( icons[1], contentDescription = items[1]) },
-                    label = { Text(items[1]) },
-                    modifier = Modifier.size(24.dp),
-                    selected = false,
-                    onClick = {  }
-                )
-                NavigationBarItem(
-                    icon = { Icon( icons[2], contentDescription = items[2]) },
-                    label = { Text(items[2]) },
-                    modifier = Modifier.size(24.dp),
-                    selected = false,
-                    onClick = {  }
-                )
+                items.forEachIndexed { index, label ->
+                    NavigationBarItem(
+                        icon = { Icon(icons[index], contentDescription = label) },
+                        label = { Text(label) },
+                        modifier = Modifier.size(24.dp),
+                        selected = index == 0,
+                        onClick = { }
+                    )
+                }
             }
         }
     )
@@ -167,4 +178,3 @@ fun VideoList(videos: List<VideoItem>, size: Int) {
         }
     }
 }
-
