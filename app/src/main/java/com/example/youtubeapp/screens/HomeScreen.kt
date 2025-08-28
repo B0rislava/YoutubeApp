@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.Player
 import com.example.youtubeapp.R
 import com.example.youtubeapp.VideoItem
 import com.example.youtubeapp.VideoRepository
@@ -168,7 +167,6 @@ fun VideoList(videos: List<VideoItem>, size: Int) {
         }
     }
 }
-
 
 
 
