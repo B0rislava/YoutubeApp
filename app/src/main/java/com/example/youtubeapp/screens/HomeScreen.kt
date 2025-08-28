@@ -39,8 +39,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.Player
 import com.example.youtubeapp.R
 import com.example.youtubeapp.VideoItem
+import com.example.youtubeapp.VideoRepository
+import com.example.youtubeapp.VideoUser
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -58,11 +61,7 @@ fun HomeScreen() {
         painterResource(id = R.drawable.lists),
         painterResource(id = R.drawable.profile)
     )
-    val sampleVideos = listOf(
-        VideoItem("dQw4w9WgXcQ", "Never Gonna Give You Up", "Rick Astley"),
-        VideoItem("3JZ_D3ELwOQ", "Charlie bit my finger!", "HDCYT"),
-        VideoItem("9bZkp7q19f0", "Gangnam Style", "PSY")
-    )
+    val sampleVideos = VideoRepository.getRNGVid(10)
 
     Scaffold(
         topBar = {
@@ -142,7 +141,7 @@ fun VideoList(videos: List<VideoItem>, size: Int) {
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     if (playVideo) {
-                        YouTubePlayer(
+                        VideoUser.Player(
                             videoId = video.id,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -150,7 +149,7 @@ fun VideoList(videos: List<VideoItem>, size: Int) {
                         )
                     } else {
                         GlideImage(
-                            imageModel = { "https://img.youtube.com/vi/${video.id}/hqdefault.jpg" },
+                            imageModel = { VideoUser.getThumbnail(video.id) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
@@ -170,25 +169,6 @@ fun VideoList(videos: List<VideoItem>, size: Int) {
     }
 }
 
-@SuppressLint("ContextCastToActivity")
-@Composable
-fun YouTubePlayer(videoId: String, modifier: Modifier = Modifier) {
-    val activity = LocalContext.current as ComponentActivity
-
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            YouTubePlayerView(context).apply {
-                activity.lifecycle.addObserver(this)
-                addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
-                    override fun onReady(player: YouTubePlayer) {
-                        player.loadVideo(videoId, 0f)
-                    }
-                })
-            }
-        }
-    )
-}
 
 
 
