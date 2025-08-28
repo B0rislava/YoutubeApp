@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.youtubeapp.R
 import com.example.youtubeapp.components.ButtonComponent
 import com.example.youtubeapp.components.ClickableTextComponent
@@ -23,15 +22,13 @@ import com.example.youtubeapp.components.HeadingTextComponent
 import com.example.youtubeapp.components.NormalTextComponent
 import com.example.youtubeapp.components.PasswordTextFieldComponent
 import com.example.youtubeapp.components.TextFieldComponent
-import com.example.youtubeapp.navigation.Screen
-import com.example.youtubeapp.viewmodel.SignUpViewModel
-
+import com.example.youtubeapp.viewmodel.SignInViewModel
 
 @Composable
-fun SignUpScreen(
-    viewModel: SignUpViewModel = viewModel(),
-    onSignUpSuccess: () -> Unit,
-    navController: NavController
+fun SignInScreen(
+    viewModel: SignInViewModel = viewModel(),
+    onSignInSuccess: () -> Unit,
+    onNavigateToSignUp: () -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -41,18 +38,9 @@ fun SignUpScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             NormalTextComponent(value = stringResource(R.string.hello))
-            HeadingTextComponent(value = stringResource(R.string.create_account))
+            HeadingTextComponent(value = stringResource(R.string.welcome))
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            TextFieldComponent(
-                labelValue = stringResource(R.string.name),
-                value = viewModel.name,
-                onValueChange = { viewModel.name = it },
-                painterResource = painterResource(R.drawable.profile)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             TextFieldComponent(
                 labelValue = stringResource(R.string.email),
@@ -64,7 +52,6 @@ fun SignUpScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-
             PasswordTextFieldComponent(
                 labelValue = stringResource(R.string.password),
                 value = viewModel.password,
@@ -73,13 +60,16 @@ fun SignUpScreen(
                 painterResource = painterResource(R.drawable.lock)
             )
 
-
             Spacer(modifier = Modifier.height(70.dp))
 
             ButtonComponent(
-                value = stringResource(R.string.signup),
-                onClick = { viewModel.submit { onSignUpSuccess() } }
-                )
+                value = stringResource(R.string.signin),
+                onClick = {
+                    if (viewModel.validateCredentials()) {
+                        onSignInSuccess()
+                    }
+                }
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -88,12 +78,9 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             ClickableTextComponent(
-                stringResource(R.string.have_account),
-                stringResource(R.string.signin)
-            ) {
-                navController.navigate(Screen.SignIn.route)
-            }
+                stringResource(R.string.dont_have_account),
+                stringResource(R.string.signup)
+            ) { onNavigateToSignUp() }
         }
     }
 }
-

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -28,12 +29,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.youtubeapp.ui.theme.componentShapes
 import com.example.youtubeapp.R
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.TextLinkStyles
 
 
 @Composable
@@ -158,15 +165,18 @@ fun PasswordTextFieldComponent(
 
 
 @Composable
-fun ButtonComponent(value: String){
-
+fun ButtonComponent(
+    value: String,
+    onClick: () -> Unit
+) {
     Button(
-        onClick = { },
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
         contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+    ) {
         Text(
             text = value,
             fontSize = 18.sp,
@@ -174,8 +184,8 @@ fun ButtonComponent(value: String){
             fontWeight = FontWeight.Bold,
         )
     }
-
 }
+
 
 @Composable
 fun DividerTextComponent(){
@@ -205,4 +215,40 @@ fun DividerTextComponent(){
         )
 
     }
+}
+
+
+@OptIn(ExperimentalTextApi::class)
+@Composable
+fun ClickableTextComponent(
+    prefixText: String,
+    actionText: String,
+    onActionClick: () -> Unit
+) {
+    val annotatedString = buildAnnotatedString {
+        append("$prefixText ")
+
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = "action_tag",
+                styles = TextLinkStyles(
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.primary
+                    ).toSpanStyle()
+                ),
+                linkInteractionListener = object : LinkInteractionListener {
+                    override fun onClick(link: LinkAnnotation) {
+                        onActionClick()
+                    }
+                }
+            )
+        ) {
+            append(actionText)
+        }
+    }
+
+    BasicText(
+        text = annotatedString,
+        style = MaterialTheme.typography.bodyLarge
+    )
 }

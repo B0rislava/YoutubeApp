@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.youtubeapp.repository.FakeRepository
 
 class SignUpViewModel : ViewModel() {
     var name by mutableStateOf("")
@@ -11,6 +12,8 @@ class SignUpViewModel : ViewModel() {
     var password by mutableStateOf("")
     var emailError by mutableStateOf<String?>(null)
     var passwordError by mutableStateOf<String?>(null)
+
+    private val repository = FakeRepository()
 
     fun validate(): Boolean {
         var valid = true
@@ -32,9 +35,14 @@ class SignUpViewModel : ViewModel() {
         return valid
     }
 
-    fun submit() {
+    fun submit(onSuccess: () -> Unit) {
         if (validate()) {
-
+            val result = repository.signUp(name, email, password)
+            if (result) {
+                onSuccess()
+            } else {
+                emailError = "Signup failed"
+            }
         }
     }
 }
