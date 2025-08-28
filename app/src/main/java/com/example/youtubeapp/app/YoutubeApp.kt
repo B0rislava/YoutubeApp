@@ -11,6 +11,7 @@ import com.example.youtubeapp.navigation.Screen
 import com.example.youtubeapp.navigation.YoutubeAppRouter
 import com.example.youtubeapp.screens.SignUpScreen
 import com.example.youtubeapp.viewmodel.SignUpViewModel
+import com.example.youtubeapp.screens.HomeScreen
 
 
 @Composable
@@ -24,7 +25,8 @@ fun YoutubeApp() {
         Crossfade(targetState = YoutubeAppRouter.currentScreen) { currentScreen ->
             when (currentScreen.value) {
                 is Screen.SignUpScreen -> {
-                    SignUpScreen(viewModel = signUpViewModel)
+                    //SignUpScreen(viewModel = signUpViewModel)
+                    HomeScreen()
                 }
             }
         }
