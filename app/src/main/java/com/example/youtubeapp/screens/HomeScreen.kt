@@ -168,10 +168,3 @@ fun VideoList(videos: List<VideoItem>, size: Int) {
     }
 }
 
-
-
-
-
-
-
-
