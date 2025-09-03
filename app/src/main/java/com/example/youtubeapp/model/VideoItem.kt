@@ -1,11 +1,9 @@
-package com.example.youtubeapp
+package com.example.youtubeapp.model
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -27,7 +25,6 @@ object VideoUser {
             modifier = modifier,
             factory = { context ->
                 YouTubePlayerView(context).apply {
-                    // Attach lifecycle owner safely
                     (parent as? ViewGroup)?.findViewTreeLifecycleOwner()?.lifecycle?.addObserver(this)
 
                     addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
