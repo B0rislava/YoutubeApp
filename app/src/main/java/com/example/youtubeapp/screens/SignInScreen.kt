@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -60,12 +61,21 @@ fun SignInScreen(
                 painterResource = painterResource(R.drawable.lock)
             )
 
+            if (viewModel.loginError != null) {
+                Text(
+                    text = viewModel.loginError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+
             Spacer(modifier = Modifier.height(70.dp))
 
             ButtonComponent(
                 value = stringResource(R.string.signin),
                 onClick = {
-                    if (viewModel.validateCredentials()) {
+                    viewModel.login {
                         onSignInSuccess()
                     }
                 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.youtubeapp.R
 import com.example.youtubeapp.components.ButtonComponent
 import com.example.youtubeapp.components.ClickableTextComponent
@@ -23,7 +22,6 @@ import com.example.youtubeapp.components.HeadingTextComponent
 import com.example.youtubeapp.components.NormalTextComponent
 import com.example.youtubeapp.components.PasswordTextFieldComponent
 import com.example.youtubeapp.components.TextFieldComponent
-import com.example.youtubeapp.navigation.Screen
 import com.example.youtubeapp.viewmodel.SignUpViewModel
 
 
@@ -31,7 +29,7 @@ import com.example.youtubeapp.viewmodel.SignUpViewModel
 fun SignUpScreen(
     viewModel: SignUpViewModel = viewModel(),
     onSignUpSuccess: () -> Unit,
-    navController: NavController
+    onNavigateToSignIn: () -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -91,7 +89,7 @@ fun SignUpScreen(
                 stringResource(R.string.have_account),
                 stringResource(R.string.signin)
             ) {
-                navController.navigate(Screen.SignIn.route)
+                onNavigateToSignIn()
             }
         }
     }

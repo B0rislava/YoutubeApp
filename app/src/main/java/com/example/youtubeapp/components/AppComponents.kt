@@ -3,8 +3,10 @@ package com.example.youtubeapp.components
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -12,6 +14,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -251,4 +255,33 @@ fun ClickableTextComponent(
         text = annotatedString,
         style = MaterialTheme.typography.bodyLarge
     )
+}
+
+@Composable
+fun MainBottomBar(
+    currentScreen: String,
+    onNavigate: (String) -> Unit
+) {
+    val items = listOf("Home", "Subscriptions", "Profile")
+    val icons = listOf(
+        painterResource(id = R.drawable.home),
+        painterResource(id = R.drawable.lists),
+        painterResource(id = R.drawable.profile)
+    )
+
+    NavigationBar(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(78.dp)
+    ) {
+        items.forEachIndexed { index, label ->
+            NavigationBarItem(
+                icon = { Icon(icons[index], contentDescription = label) },
+                label = { Text(label) },
+                modifier = Modifier.size(24.dp),
+                selected = label == currentScreen,
+                onClick = { onNavigate(label) }
+            )
+        }
+    }
 }
