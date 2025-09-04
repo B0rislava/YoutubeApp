@@ -272,7 +272,6 @@ fun MainBottomBar(
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
-            .height(78.dp)
     ) {
         items.forEachIndexed { index, label ->
             NavigationBarItem(

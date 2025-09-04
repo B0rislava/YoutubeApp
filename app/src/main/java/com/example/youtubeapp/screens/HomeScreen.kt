@@ -27,10 +27,12 @@
     import androidx.compose.material3.TextField
     import androidx.compose.material3.TopAppBar
     import androidx.compose.runtime.Composable
+    import androidx.compose.runtime.LaunchedEffect
     import androidx.compose.runtime.getValue
     import androidx.compose.runtime.mutableIntStateOf
     import androidx.compose.runtime.mutableStateOf
     import androidx.compose.runtime.remember
+    import androidx.compose.runtime.saveable.rememberSaveable
     import androidx.compose.runtime.setValue
     import androidx.compose.ui.Alignment
     import androidx.compose.ui.Modifier
@@ -55,8 +57,11 @@
     @Composable
     fun HomeScreen(
         currentUserEmail: String,
-        navController: NavController
+        navController: NavController,
+        initialTab: Int = 0
     ) {
+        var selectedTab by rememberSaveable { mutableIntStateOf(initialTab) }
+        LaunchedEffect(initialTab) { selectedTab = initialTab }
 
         val context = LocalContext.current
         val userRepository = UserRepository(DatabaseProvider.getDatabase(context).userDao())
@@ -64,8 +69,6 @@
         val profileViewModel: ProfileViewModel = viewModel(
             factory = ProfileViewModelFactory(currentUserEmail, userRepository)
         )
-
-        var selectedTab by remember { mutableIntStateOf(0) }
 
         val navigateToTab: (String) -> Unit = { screen ->
             selectedTab = when (screen) {
@@ -139,7 +142,10 @@
             content = { paddingValues ->
                 Box(modifier = Modifier.padding(paddingValues)) {
                     when (selectedTab) {
-                        0 -> VideoList(videos = displayedVideos, size = 200)
+                        0 -> VideoList(
+                            videos = displayedVideos, size = 200, navController = navController,
+                            currentUserEmail = currentUserEmail
+                        )
                         1 -> SubscriptionsScreen(currentUserEmail, navController)
                         2 -> ProfileScreen(profileViewModel, navController)
                     }
@@ -160,38 +166,26 @@
     }
 
     @Composable
-    fun VideoList(videos: List<VideoItem>, size: Int) {
+    fun VideoList(videos: List<VideoItem>, size: Int, navController: NavController, currentUserEmail: String) {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             items(videos) { video ->
-                var playVideo by remember { mutableStateOf(false) }
-
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { playVideo = !playVideo },
+                        .clickable { navController.navigate("watch/${video.id}/$currentUserEmail") },
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
-                        if (playVideo) {
-                            VideoUser.Player(
-                                videoId = video.id,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(size.dp)
-                            )
-                        } else {
-                            GlideImage(
-                                imageModel = { VideoUser.getThumbnail(video.id) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                            )
-                        }
-
+                        GlideImage(
+                            imageModel = { VideoUser.getThumbnail(video.id) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = video.title, style = MaterialTheme.typography.titleMedium)
                         Text(

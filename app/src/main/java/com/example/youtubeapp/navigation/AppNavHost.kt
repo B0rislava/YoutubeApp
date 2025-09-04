@@ -1,7 +1,11 @@
 package com.example.youtubeapp.navigation
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +24,9 @@ import com.example.youtubeapp.viewmodel.factory.SignInViewModelFactory
 import com.example.youtubeapp.viewmodel.factory.SignUpViewModelFactory
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.example.youtubeapp.model.VideoRepository
 import com.example.youtubeapp.screens.SubscriptionsScreen
+import com.example.youtubeapp.screens.VideoWatchScreen
 
 @Composable
 fun AppNavHost() {
@@ -31,7 +37,7 @@ fun AppNavHost() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.SignUp.route
+        startDestination = Screen.SignIn.route
     ) {
 
         composable(Screen.SignUp.route) {
@@ -54,20 +60,27 @@ fun AppNavHost() {
             SignInScreen(
                 viewModel = signInViewModel,
                 onSignInSuccess = {
-                    navController.navigate("${Screen.Home.route}/${signInViewModel.email}")
+                    // Go to Home with tab=0 (Home tab)
+                    navController.navigate("${Screen.Home.route}/${signInViewModel.email}?tab=0")
                 },
                 onNavigateToSignUp = { navController.navigate(Screen.SignUp.route) }
             )
         }
 
+        // ✅ Home now accepts optional ?tab=…
         composable(
-            route = "${Screen.Home.route}/{email}",
-            arguments = listOf(navArgument("email") { type = NavType.StringType })
+            route = "${Screen.Home.route}/{email}?tab={tab}",
+            arguments = listOf(
+                navArgument("email") { type = NavType.StringType },
+                navArgument("tab")  { type = NavType.IntType; defaultValue = 0 }
+            )
         ) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
+            val initialTab = backStackEntry.arguments?.getInt("tab") ?: 0
             HomeScreen(
                 currentUserEmail = email,
-                navController = navController
+                navController = navController,
+                initialTab = initialTab
             )
         }
 
@@ -82,7 +95,7 @@ fun AppNavHost() {
             ProfileScreen(
                 viewModel = profileViewModel,
                 navController = navController
-                )
+            )
         }
 
         composable(
@@ -96,5 +109,25 @@ fun AppNavHost() {
             )
         }
 
+        composable(
+            route = "watch/{videoId}/{email}",
+            arguments = listOf(
+                navArgument("videoId") { type = NavType.StringType },
+                navArgument("email") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("videoId") ?: return@composable
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val video = VideoRepository.videos.firstOrNull { it.id == id }
+            if (video == null) {
+                Text("Video not found", modifier = Modifier.padding(16.dp))
+            } else {
+                VideoWatchScreen(
+                    video = video,
+                    navController = navController,
+                    currentUserEmail = email
+                )
+            }
+        }
     }
 }

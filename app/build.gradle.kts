@@ -49,6 +49,10 @@ dependencies {
     implementation("androidx.room:room-runtime:${roomVersion}")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    implementation("com.google.android.material:material:1.12.0")
+// or newer
+    implementation("androidx.appcompat:appcompat:1.7.0")
+// DayNight support
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
