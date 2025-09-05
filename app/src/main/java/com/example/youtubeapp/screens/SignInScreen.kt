@@ -91,6 +91,7 @@ fun SignInScreen(
                 stringResource(R.string.dont_have_account),
                 stringResource(R.string.signup)
             ) { onNavigateToSignUp() }
+
         }
     }
 }
