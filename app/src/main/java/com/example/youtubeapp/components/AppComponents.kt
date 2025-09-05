@@ -241,9 +241,7 @@ fun ClickableTextComponent(
                     ).toSpanStyle()
                 ),
                 linkInteractionListener = object : LinkInteractionListener {
-                    override fun onClick(link: LinkAnnotation) {
-                        onActionClick()
-                    }
+                    override fun onClick(link: LinkAnnotation) = onActionClick()
                 }
             )
         ) {
@@ -253,9 +251,12 @@ fun ClickableTextComponent(
 
     BasicText(
         text = annotatedString,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        )
     )
 }
+
 
 @Composable
 fun MainBottomBar(
@@ -272,7 +273,6 @@ fun MainBottomBar(
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
-            .height(78.dp)
     ) {
         items.forEachIndexed { index, label ->
             NavigationBarItem(
