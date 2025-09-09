@@ -43,4 +43,12 @@ class SimpleListsRepository(
     suspend fun getHistory(userId: Int, limit: Int = 100): List<String> =
         history.getHistoryIds(userId, limit)
     suspend fun clearHistory(userId: Int) = history.clearHistory(userId)
+
+    suspend fun clearForUser(uid: Int) {
+        likes.deleteAllForUser(uid)
+        dislikes.deleteAllForUser(uid)
+        subs.deleteAllForUser(uid)
+        history.deleteAllForUser(uid)
+    }
+
 }

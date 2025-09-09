@@ -46,10 +46,8 @@
     import com.example.youtubeapp.model.VideoRepository
     import com.example.youtubeapp.model.VideoUser
     import com.example.youtubeapp.components.MainBottomBar
-    import com.example.youtubeapp.data.local.DatabaseProvider
-    import com.example.youtubeapp.repository.UserRepository
     import com.example.youtubeapp.viewmodel.ProfileViewModel
-    import com.example.youtubeapp.viewmodel.factory.ProfileViewModelFactory
+    import com.example.youtubeapp.viewmodel.factory.AppViewModelFactory
     import com.skydoves.landscapist.glide.GlideImage
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -64,10 +62,9 @@
         LaunchedEffect(initialTab) { selectedTab = initialTab }
 
         val context = LocalContext.current
-        val userRepository = UserRepository(DatabaseProvider.getDatabase(context).userDao())
 
         val profileViewModel: ProfileViewModel = viewModel(
-            factory = ProfileViewModelFactory(currentUserEmail, userRepository)
+            factory = AppViewModelFactory(context, currentUserEmail)
         )
 
         val navigateToTab: (String) -> Unit = { screen ->

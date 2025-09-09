@@ -21,4 +21,7 @@ interface HistoryDaoSimple {
 
     @Query("DELETE FROM watch_history WHERE userId = :userId")
     suspend fun clearHistory(userId: Int)
+
+    @Query("DELETE FROM watch_history WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: Int)
 }

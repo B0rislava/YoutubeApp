@@ -10,8 +10,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.youtubeapp.data.local.DatabaseProvider
-import com.example.youtubeapp.repository.UserRepository
 import com.example.youtubeapp.screens.HomeScreen
 import com.example.youtubeapp.screens.ProfileScreen
 import com.example.youtubeapp.screens.SignInScreen
@@ -19,21 +17,18 @@ import com.example.youtubeapp.screens.SignUpScreen
 import com.example.youtubeapp.viewmodel.ProfileViewModel
 import com.example.youtubeapp.viewmodel.SignInViewModel
 import com.example.youtubeapp.viewmodel.SignUpViewModel
-import com.example.youtubeapp.viewmodel.factory.ProfileViewModelFactory
-import com.example.youtubeapp.viewmodel.factory.SignInViewModelFactory
-import com.example.youtubeapp.viewmodel.factory.SignUpViewModelFactory
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.youtubeapp.model.VideoRepository
 import com.example.youtubeapp.screens.SubscriptionsScreen
 import com.example.youtubeapp.screens.VideoWatchScreen
+import com.example.youtubeapp.viewmodel.factory.AppViewModelFactory
 
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    val userRepository = UserRepository(DatabaseProvider.getDatabase(context).userDao())
 
     NavHost(
         navController = navController,
@@ -42,7 +37,7 @@ fun AppNavHost() {
 
         composable(Screen.SignUp.route) {
             val signUpViewModel: SignUpViewModel = viewModel(
-                factory = SignUpViewModelFactory(context)
+                factory = AppViewModelFactory(context)
             )
             SignUpScreen(
                 viewModel = signUpViewModel,
@@ -55,19 +50,17 @@ fun AppNavHost() {
 
         composable(Screen.SignIn.route) {
             val signInViewModel: SignInViewModel = viewModel(
-                factory = SignInViewModelFactory(context)
+                factory = AppViewModelFactory(context)
             )
             SignInScreen(
                 viewModel = signInViewModel,
                 onSignInSuccess = {
-                    // Go to Home with tab=0 (Home tab)
                     navController.navigate("${Screen.Home.route}/${signInViewModel.email}?tab=0")
                 },
                 onNavigateToSignUp = { navController.navigate(Screen.SignUp.route) }
             )
         }
 
-        // ✅ Home now accepts optional ?tab=…
         composable(
             route = "${Screen.Home.route}/{email}?tab={tab}",
             arguments = listOf(
@@ -90,7 +83,7 @@ fun AppNavHost() {
         ) { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val profileViewModel: ProfileViewModel = viewModel(
-                factory = ProfileViewModelFactory(email, userRepository)
+                factory = AppViewModelFactory(context, email)
             )
             ProfileScreen(
                 viewModel = profileViewModel,

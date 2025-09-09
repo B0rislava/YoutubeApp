@@ -13,4 +13,7 @@ interface SubscriptionsDao {
 
     @Query("SELECT channelId FROM subscribed_channels WHERE userId = :userId ORDER BY createdAt DESC")
     suspend fun getSubscriptions(userId: Int): List<String>
+
+    @Query("DELETE FROM subscribed_channels WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: Int)
 }

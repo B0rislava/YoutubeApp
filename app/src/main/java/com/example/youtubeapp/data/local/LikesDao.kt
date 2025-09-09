@@ -13,4 +13,7 @@ interface LikesDao {
 
     @Query("SELECT videoId FROM liked_videos WHERE userId = :userId ORDER BY createdAt DESC")
     suspend fun getLiked(userId: Int): List<String>
+
+    @Query("DELETE FROM liked_videos WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: Int)
 }

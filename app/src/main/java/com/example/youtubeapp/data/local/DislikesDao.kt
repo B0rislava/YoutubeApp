@@ -13,4 +13,7 @@ interface DislikesDao {
 
     @Query("SELECT videoId FROM disliked_videos WHERE userId = :userId ORDER BY createdAt DESC")
     suspend fun getDisliked(userId: Int): List<String>
+
+    @Query("DELETE FROM disliked_videos WHERE userId = :userId")
+    suspend fun deleteAllForUser(userId: Int)
 }

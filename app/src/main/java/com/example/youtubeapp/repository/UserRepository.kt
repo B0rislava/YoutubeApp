@@ -26,4 +26,10 @@ class UserRepository(private val userDao: UserDao) {
         return userDao.getUserByEmail(email)
     }
 
+    suspend fun deleteUserById(uid: Int) {
+        userDao.deleteById(uid)
+    }
+
+    suspend fun updateUser(user: User) =
+        userDao.updateUser(user)
 }

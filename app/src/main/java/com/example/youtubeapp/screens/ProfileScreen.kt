@@ -9,10 +9,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -66,6 +67,9 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
     var historyOpen by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
+    var showSignOutDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
 
     // Load user + lists
     LaunchedEffect(email) {
@@ -96,7 +100,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Divider()
+        HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
 
         // Liked videos
         ExpandableSection(
@@ -135,12 +139,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
 
         // Sign out
         Button(
-            onClick = {
-                navController.navigate(Screen.SignIn.route) {
-                    popUpTo(0) { inclusive = true }
-                    launchSingleTop = true
-                }
-            },
+            onClick = { showSignOutDialog = true },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFFE62117),
@@ -150,7 +149,91 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
             Text("Sign out")
         }
 
-        Spacer(Modifier.height(8.dp))
+        if (showSignOutDialog) {
+            AlertDialog(
+                onDismissRequest = { showSignOutDialog = false },
+                title = { Text("Sign Out") },
+                text = { Text("Do you really want to sign out?") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showSignOutDialog = false
+                            navController.navigate(Screen.SignIn.route) {
+                                popUpTo(0) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                    ) {
+                        Text("Yes, Sign Out")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showSignOutDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        // Delete
+        Button(
+            onClick = { showDeleteDialog = true },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.DarkGray,
+                contentColor = Color.White
+            ),
+        ) {
+            Text("Delete account")
+        }
+
+        if(showDeleteDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteDialog = false },
+                title = { Text("Delete Account") },
+                text = { Text("Do you really want to delete your account? This action cannot be undone.") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showDeleteDialog = false
+                            userId?.let { uid ->
+                                scope.launch {
+                                    userRepo.deleteUserById(uid)
+                                    listsRepo.clearForUser(uid)
+
+                                    navController.navigate(Screen.SignIn.route){
+                                        popUpTo(0) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                }
+                            }
+                        }
+                    ) {
+                        Text("Yes, Delete")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showDeleteDialog = false }) {
+                        Text("Cancel")
+                    }
+                }
+            )
+        }
+
+        Button(
+            onClick = { showEditDialog = true },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Edit Profile")
+        }
+
+        if (showEditDialog) {
+            EditProfileDialog(
+                viewModel = viewModel,
+                onDismiss = { showEditDialog = false }
+            )
+        }
+
     }
 }
 
@@ -161,7 +244,7 @@ private fun ExpandableSection(
     count: Int,
     expanded: Boolean,
     onToggle: () -> Unit,
-    Icon: Painter? = null,   // renamed for clarity
+    Icon: Painter? = null,
     content: @Composable () -> Unit
 ) {
     Surface(tonalElevation = 1.dp, shape = MaterialTheme.shapes.medium) {
@@ -239,7 +322,7 @@ private fun VideoIdList(
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
-            Divider()
+            HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
         }
     }
 }
