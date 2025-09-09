@@ -8,7 +8,10 @@
     <string name="password">Password</string>
     <string name="signup">Sign Up</string>
     <string name="signin">Sign In</string>
+    <string name="signout">Sign Out</string>
     <string name="or">or</string>
     <string name="have_account">Already have an account?</string>
     <string name="dont_have_account">Don\'t have an account yet?</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>

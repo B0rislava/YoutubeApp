@@ -3,7 +3,6 @@ package com.example.youtubeapp.components
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -96,9 +96,9 @@ fun TextFieldComponent(
         label = { Text(labelValue) },
         isError = error != null,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            cursorColor = MaterialTheme.colorScheme.primary
+            focusedBorderColor = Color.Red,
+            focusedLabelColor = Color.Red,
+            cursorColor = Color.Red
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -132,9 +132,9 @@ fun PasswordTextFieldComponent(
         label = { Text(labelValue) },
         isError = error != null,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            cursorColor = MaterialTheme.colorScheme.primary
+            focusedBorderColor = Color.Red,
+            focusedLabelColor = Color.Red,
+            cursorColor = Color.Red
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +179,10 @@ fun ButtonComponent(
             .fillMaxWidth()
             .heightIn(48.dp),
         contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.DarkGray,
+            contentColor = Color.White
+        )
     ) {
         Text(
             text = value,
@@ -200,21 +203,21 @@ fun DividerTextComponent(){
             modifier = Modifier
             .fillMaxWidth()
             .weight(1f),
-            color = MaterialTheme.colorScheme.primary,
+            color = Color.Red,
             thickness = 1.dp
         )
 
         Text(modifier = Modifier.padding(8.dp),
             text = stringResource(R.string.or),
             fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.primary
+            color = Color.Red
         )
 
         HorizontalDivider(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            color = MaterialTheme.colorScheme.primary,
+            color = Color.Red,
             thickness = 1.dp
         )
 
@@ -237,7 +240,7 @@ fun ClickableTextComponent(
                 tag = "action_tag",
                 styles = TextLinkStyles(
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color.Red
                     ).toSpanStyle()
                 ),
                 linkInteractionListener = object : LinkInteractionListener {
@@ -252,7 +255,7 @@ fun ClickableTextComponent(
     BasicText(
         text = annotatedString,
         style = MaterialTheme.typography.bodyLarge.copy(
-            color = MaterialTheme.colorScheme.onSurface
+            color = Color.Black
         )
     )
 }

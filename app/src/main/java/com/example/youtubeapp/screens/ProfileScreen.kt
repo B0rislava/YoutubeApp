@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.youtubeapp.R
@@ -87,7 +88,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scroll)
-            .padding(16.dp),
+            .padding(30.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Header: Name + Email
@@ -147,13 +148,13 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
                 contentColor = Color.White
             ),
         ) {
-            Text("Sign out")
+            Text(stringResource(R.string.signout))
         }
 
         if (showSignOutDialog) {
             AlertDialog(
                 onDismissRequest = { showSignOutDialog = false },
-                title = { Text("Sign Out") },
+                title = { Text(stringResource(R.string.signout)) },
                 text = { Text("Do you really want to sign out?") },
                 confirmButton = {
                     Button(
@@ -166,14 +167,24 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
                                     launchSingleTop = true
                                 }
                             }
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text("Yes, Sign Out")
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { showSignOutDialog = false }) {
-                        Text("Cancel")
+                    Button(
+                        onClick = { showSignOutDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -213,14 +224,24 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
                                     }
                                 }
                             }
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text("Yes, Delete")
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { showDeleteDialog = false }) {
-                        Text("Cancel")
+                    Button(
+                        onClick = { showDeleteDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.DarkGray,
+                            contentColor = Color.White
+                        )
+                        ) {
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -228,7 +249,11 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
 
         Button(
             onClick = { showEditDialog = true },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Gray,
+                contentColor = Color.White
+            ),
         ) {
             Text("Edit Profile")
         }
