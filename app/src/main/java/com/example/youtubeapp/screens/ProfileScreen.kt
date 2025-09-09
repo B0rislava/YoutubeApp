@@ -34,6 +34,7 @@ import com.example.youtubeapp.model.VideoUser
 import com.example.youtubeapp.navigation.Screen
 import com.example.youtubeapp.repository.SimpleListsRepository
 import com.example.youtubeapp.repository.UserRepository
+import com.example.youtubeapp.utils.SessionManager
 import com.example.youtubeapp.viewmodel.ProfileViewModel
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
@@ -157,10 +158,13 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
                 confirmButton = {
                     Button(
                         onClick = {
-                            showSignOutDialog = false
-                            navController.navigate(Screen.SignIn.route) {
-                                popUpTo(0) { inclusive = true }
-                                launchSingleTop = true
+                            scope.launch {
+                                showSignOutDialog = false
+                                SessionManager.clearUserSession(context)
+                                navController.navigate(Screen.SignIn.route) {
+                                    popUpTo(0) { inclusive = true }
+                                    launchSingleTop = true
+                                }
                             }
                         }
                     ) {
@@ -200,6 +204,8 @@ fun ProfileScreen(viewModel: ProfileViewModel, navController: NavController) {
                                 scope.launch {
                                     userRepo.deleteUserById(uid)
                                     listsRepo.clearForUser(uid)
+
+                                    SessionManager.clearUserSession(context)
 
                                     navController.navigate(Screen.SignIn.route){
                                         popUpTo(0) { inclusive = true }

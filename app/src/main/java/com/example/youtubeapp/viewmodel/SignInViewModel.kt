@@ -3,9 +3,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.youtubeapp.repository.UserRepository
-import kotlinx.coroutines.launch
 
 class SignInViewModel(private val repository: UserRepository) : ViewModel() {
     var email by mutableStateOf("")
@@ -30,16 +28,15 @@ class SignInViewModel(private val repository: UserRepository) : ViewModel() {
         return isValid
     }
 
-    fun login(onSuccess: () -> Unit) {
-        if (!validateCredentials()) return
+    suspend fun login(): Boolean {
+        if (!validateCredentials()) return false
 
-        viewModelScope.launch {
-            val user = repository.login(email, password)
-            if(user != null){
-                onSuccess()
-            } else {
-                loginError = "Invalid credentials"
-            }
+        val user = repository.login(email, password)
+        return if (user != null) {
+            true
+        } else {
+            loginError = "Invalid credentials"
+            false
         }
     }
 }

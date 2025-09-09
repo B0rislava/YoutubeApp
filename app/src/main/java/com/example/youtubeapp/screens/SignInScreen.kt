@@ -10,7 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -23,7 +25,9 @@ import com.example.youtubeapp.components.HeadingTextComponent
 import com.example.youtubeapp.components.NormalTextComponent
 import com.example.youtubeapp.components.PasswordTextFieldComponent
 import com.example.youtubeapp.components.TextFieldComponent
+import com.example.youtubeapp.utils.SessionManager
 import com.example.youtubeapp.viewmodel.SignInViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
@@ -31,6 +35,10 @@ fun SignInScreen(
     onSignInSuccess: () -> Unit,
     onNavigateToSignUp: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -75,8 +83,17 @@ fun SignInScreen(
             ButtonComponent(
                 value = stringResource(R.string.signin),
                 onClick = {
-                    viewModel.login {
-                        onSignInSuccess()
+                    scope.launch {
+                        try {
+                            val success = viewModel.login()
+                            if (success) {
+                                SessionManager.saveUserSession(context, viewModel.email)
+                                onSignInSuccess()
+                            }
+                        } catch (e: Exception){
+                            viewModel.loginError = "Something went wrong"
+                            e.printStackTrace()
+                        }
                     }
                 }
             )
